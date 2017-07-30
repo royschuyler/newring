@@ -381,9 +381,9 @@ var ringText = '';
         text += 'blinewidth ' + w + ' ' + finalCount + '\n';
 
         if(s == 's'){
-          text += 'bcolor ' + put*sin(m) + ' ' + put*sin(m) + ' ' + put*sin(m) + ' ' + finalCount + '\n'
+          text += 'bcolor ' + sin(put) + ' ' + sin(put) + ' ' + sin(put) + ' ' + finalCount + '\n'
         } else{
-          text += 'bcolor ' + put*cos(m) + ' ' + put*cos(m)  + ' ' + put*cos(m)  + ' ' + finalCount + '\n'
+          text += 'bcolor ' + cos(put*.9) + ' ' + cos(put)  + ' ' + cos(put)  + ' ' + finalCount + '\n'
         }
         k++
         finalCount++
@@ -419,27 +419,27 @@ return end
 
 var extra = 'blinewidth 2 all' + '\n' + 'drawframe no' + '\n' + 'asetticks x no' + '\n' + 'asetticks y no' + '\n' + 'asetminticks x no' + '\n' + 'asetminticks y no' + '\n' +'framewidth 0' + '\n' + 'bstyle yes no no no no no no yes no no 0' + '\n' + 'margins 0 0 0 0' + '\n' + 'range x -1.2 1.2' + '\n' + 'range y -1.2 1.2';
 
-  var d = 500;
+  var d = 1000;
   var n = 3;
-  var a = (1.2);
+  var a = (1.618);
   var f1 = 1;
   var f2 = 1;
   var bAndDSize = .95;
   var baseRingStart = radians(0);
-  var base = 90;
+  var base = 30;
   var ringStart1 = radians(base);
   var ringStart2 = radians(base+120);
   var ringStart3 = radians(base+240);
   var aToCAdd = radians(5);
 
 var ring1 = makeShape(d,n,a,f1,f2,bAndDSize,baseRingStart,ringStart1,aToCAdd);
-//var ring2 = makeShape(d,n,a,f1,f2,bAndDSize,baseRingStart,ringStart2,aToCAdd);
-//var ring3 = makeShape(d,n,a,f1,f2,bAndDSize,baseRingStart,ringStart3,aToCAdd);
+var ring2 = makeShape(d,n,a,f1,f2,bAndDSize,baseRingStart,ringStart2,aToCAdd);
+var ring3 = makeShape(d,n,a,f1,f2,bAndDSize,baseRingStart,ringStart3,aToCAdd);
 
-var finish = ring1 + extra;
+//var finish = ring1 + extra;
 //var finish = ring2 + extra;
 //var finish = ring3 + extra;
-//var finish = ring1 + ring2 + ring3 + extra;
+var finish = ring1 + ring2 + ring3 + extra;
 
 console.log(finish);
 
