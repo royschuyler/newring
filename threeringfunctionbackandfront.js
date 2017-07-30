@@ -148,42 +148,15 @@ function separate(xArr,yArr,frontCount,backcount,bAndDSize){
   return obj
 }
 
+function equalOut(obj){
 
-function equalOut(arr1,arr2){
+  var arr = [obj.x1,obj.x2,obj.x3,obj.x4];
+  var count = arr.reduce(function(a, b) {
+    return Math.max(a, b);
+  });
 
-  var obj = {
-    arr1: arr1.map(a => a),
-    arr2: arr2.map(a => a)
-  }
-
-   var obj = {
-    arr1: arr1.map(function(item, i) {
-      return item
-    }),
-    arr2: arr2.map(function(item, i) {
-      return item
-    })
-  }
-
-  if(obj.arr1.length > obj.arr2.length){
-    var length = obj.arr1.length;
-    var toCopy = obj.arr2[obj.arr2.length-1];
-    for(i=0;i<length;i++){
-      if(obj.arr2[i] == undefined){
-        obj.arr2.push(toCopy);
-      }
-    }
-  } else{
-    var length = obj.arr2.length;
-    var toCopy = obj.arr1[obj.arr1.length-1];
-    for(i=0;i<length;i++){
-      if(obj.arr1[i] == undefined){
-        obj.arr1.push(toCopy);
-      }
-    }
-  }
-  return obj
-}
+  return count
+ }
 
 //**********************END FUNCTIONS*********************
 //******************************************************************************************************************
@@ -228,75 +201,35 @@ var ringText = '';
     a: {
       x: [],
       y: [],
-      frontCount: 0,
-      backCount: 0,
+      frontCount: d/2,
+      backCount: d/2,
       xBack: [],
       yBack: []
     },
     b: {
       x: [],
       y: [],
-      frontCount: 0,
-      backCount: 0,
+      frontCount: d/2,
+      backCount: d/2,
       xBack: [],
       yBack: [],
     },
     c: {
       x: [],
       y: [],
-      frontCount: 0,
-      backCount: 0,
+      frontCount: d/2,
+      backCount: d/2,
       xBack: [],
       yBack: [],
     },
     d: {
       x: [],
       y: [],
-      frontCount: 0,
-      backCount: 0,
+      frontCount: d/2,
+      backCount: d/2,
       xBack: [],
       yBack: [],
-    },
-    ac: {
-      axBack: [],
-      ayBack: [],
-      axFront: [],
-      ayFront: [],
-      cxBack: [],
-      cyBack: [],
-      cxFront: [],
-      cyFront: []
-      },
-    bd: {
-      bxBack: [],
-      byBack: [],
-      bxFront: [],
-      byFront: [],
-      dxBack: [],
-      dyBack: [],
-      dxFront: [],
-      dyFront: []
-     },
-    ab: {
-      axBack: [],
-      ayBack: [],
-      axFront: [],
-      ayFront: [],
-      bxBack: [],
-      byBack: [],
-      bxFront: [],
-      byFront: []
-     },
-    cd: {
-      cxBack: [],
-      cyBack: [],
-      cxFront: [],
-      cyFront: [],
-      dxBack: [],
-      dyBack: [],
-      dxFront: [],
-      dyFront: []
-     }
+    }
   }
 
   //*********************DERIVED*********************
@@ -335,7 +268,7 @@ var ringText = '';
   obj.b.y = wrapBy;
   obj.c.y = wrapCy;
   obj.d.y = wrapDy;
-//REVERSING ARRAYS TO PLOT FROM GROUND UP
+
   obj.a.x.reverse();
   obj.b.x.reverse();
   obj.c.x.reverse();
@@ -345,15 +278,34 @@ var ringText = '';
   obj.c.y.reverse();
   obj.d.y.reverse();
 
-  //PUTTING FRONT AND BACK COUNTS IN OBJ
-  obj.a.frontCount = getFront(obj.a.x,obj.a.y,.99).frontCount;
-  obj.a.backCount = getFront(obj.a.x,obj.a.y,.99).backCount;
+  obj.a.frontCount = getFront(obj.a.x,obj.a.y,.9).frontCount;
+  obj.a.backCount = getFront(obj.a.x,obj.a.y,.9).backCount;
   obj.b.frontCount = getFront(obj.b.x,obj.b.y,.9*bAndDSize).frontCount;
   obj.b.backCount = getFront(obj.b.x,obj.b.y,.9*bAndDSize).backCount;
-  obj.c.frontCount = getFront(obj.c.x,obj.c.y,.99).frontCount;
-  obj.c.backCount = getFront(obj.c.x,obj.c.y,.99).backCount;
+  obj.c.frontCount = getFront(obj.c.x,obj.c.y,.9).frontCount;
+  obj.c.backCount = getFront(obj.c.x,obj.c.y,.9).backCount;
   obj.d.frontCount = getFront(obj.d.x,obj.d.y,.9*bAndDSize).frontCount;
   obj.d.backCount = getFront(obj.d.x,obj.d.y,.9*bAndDSize).backCount;
+
+  var equalObj = {
+    x1: obj.a.frontCount,
+    x2: obj.b.frontCount,
+    x3: obj.c.frontCount,
+    x4: obj.d.frontCount
+  }
+
+  var frontCount = equalOut(equalObj);
+  var backCount = d-frontCount;
+
+  obj.a.frontCount = frontCount;
+  obj.a.backCount = backCount;
+  obj.b.frontCount = frontCount;
+  obj.b.backCount = backCount;
+  obj.c.frontCount = frontCount;
+  obj.c.backCount = backCount;
+  obj.d.frontCount = frontCount;
+  obj.d.backCount = backCount;
+
 
   //SEPARATING FRONT AND BACK IN OBJ
   var separateA = separate(obj.a.x,obj.a.y,obj.a.frontCount,obj.a.backCount);
@@ -378,59 +330,14 @@ var ringText = '';
   obj.d.yFront = separateD.yFront;
   obj.d.yBack = separateD.yBack;
 
-  //EQUALIZING AC AND BD FRONT AND BACK
-  obj.ac.axFront = equalOut(obj.a.xFront,obj.c.xFront,1).arr1;
-  obj.ac.cxFront = equalOut(obj.a.xFront,obj.c.xFront,1).arr2;
-  obj.ac.ayFront = equalOut(obj.a.yFront,obj.c.yFront,1).arr1;
-  obj.ac.cyFront = equalOut(obj.a.yFront,obj.c.yFront,1).arr2;
-
-  obj.ac.axBack = equalOut(obj.a.xBack,obj.c.xBack,1).arr1;
-  obj.ac.cxBack = equalOut(obj.a.xBack,obj.c.xBack,1).arr2;
-  obj.ac.ayBack = equalOut(obj.a.yBack,obj.c.yBack,1).arr1;
-  obj.ac.cyBack = equalOut(obj.a.yBack,obj.c.yBack,1).arr2;
-
-  obj.bd.bxFront = equalOut(obj.b.xFront,obj.d.xFront,.8).arr1;
-  obj.bd.dxFront = equalOut(obj.b.xFront,obj.d.xFront,.8).arr2;
-  obj.bd.byFront = equalOut(obj.b.yFront,obj.d.yFront,.8).arr1;
-  obj.bd.dyFront = equalOut(obj.b.yFront,obj.d.yFront,.8).arr2;
-
-  obj.bd.bxBack = equalOut(obj.b.xBack,obj.d.xBack,.8).arr1;
-  obj.bd.dxBack = equalOut(obj.b.xBack,obj.d.xBack,.8).arr2;
-  obj.bd.byBack = equalOut(obj.b.yBack,obj.d.yBack,.8).arr1;
-  obj.bd.dyBack = equalOut(obj.b.yBack,obj.d.yBack,.8).arr2;
-
-  obj.ab.axFront = equalOut(obj.a.xFront,obj.b.xFront,.8).arr1;
-  obj.ab.bxFront = equalOut(obj.a.xFront,obj.b.xFront,.8).arr2;
-  obj.ab.ayFront = equalOut(obj.a.yFront,obj.b.yFront,.8).arr1;
-  obj.ab.byFront = equalOut(obj.a.yFront,obj.b.yFront,.8).arr2;
-
-  obj.ab.axBack = equalOut(obj.a.xBack,obj.b.xBack,.8).arr1;
-  obj.ab.bxBack = equalOut(obj.a.xBack,obj.b.xBack,.8).arr2;
-  obj.ab.ayBack = equalOut(obj.a.yBack,obj.b.yBack,.8).arr1;
-  obj.ab.byBack = equalOut(obj.a.yBack,obj.b.yBack,.8).arr2;
-
-  obj.cd.cxFront = equalOut(obj.c.xFront,obj.d.xFront,.8).arr1;
-  obj.cd.dxFront = equalOut(obj.c.xFront,obj.d.xFront,.8).arr2;
-  obj.cd.cyFront = equalOut(obj.c.yFront,obj.d.yFront,.8).arr1;
-  obj.cd.dyFront = equalOut(obj.c.yFront,obj.d.yFront,.8).arr2;
-
-  obj.cd.cxBack = equalOut(obj.c.xBack,obj.d.xBack,.8).arr1;
-  obj.cd.dxBack = equalOut(obj.c.xBack,obj.d.xBack,.8).arr2;
-  obj.cd.cyBack = equalOut(obj.c.yBack,obj.d.yBack,.8).arr1;
-  obj.cd.dyBack = equalOut(obj.c.yBack,obj.d.yBack,.8).arr2;
-
   console.log(obj);
 
 
-
-
-
-
-//   //*************PLOT STUFF************************************
+   //*************PLOT STUFF************************************
   //var finalCount = 0;
   //var buffer = '';
-  var mainBack = obj.a.backCount; //frontCount because reversed
-  var mainFront = obj.a.frontCount; //frontCount because reversed
+  var mainBack = obj.a.backCount;
+  var mainFront = obj.a.frontCount;
   var frontUse = 1/(mainFront/2);
   var backUse = 1/(mainBack/2);
 
@@ -440,7 +347,7 @@ var ringText = '';
      //1 = white
      //0 = black
     var scale = 1;
-    var use = 1/(x1.length/2);
+    //var use = 1/(x1.length/2);
     var k = 0;
     var m = 0;
 
@@ -452,6 +359,7 @@ var ringText = '';
         }
         if(k>=mainFront/2 && k<=mainFront){
           var put = frontUse * m;
+
           m--
           //end should be 0
         }
@@ -473,9 +381,9 @@ var ringText = '';
         text += 'blinewidth ' + w + ' ' + finalCount + '\n';
 
         if(s == 's'){
-          text += 'bcolor ' + .9 + ' ' + put + ' ' + put + ' ' + finalCount + '\n'
+          text += 'bcolor ' + put*sin(m) + ' ' + put*sin(m) + ' ' + put*sin(m) + ' ' + finalCount + '\n'
         } else{
-          text += 'bcolor ' + put + ' ' + put + ' ' + put + ' ' + finalCount + '\n'
+          text += 'bcolor ' + put*cos(m) + ' ' + put*cos(m)  + ' ' + put*cos(m)  + ' ' + finalCount + '\n'
         }
         k++
         finalCount++
@@ -484,56 +392,45 @@ var ringText = '';
 
   //***********FRONT IS BACK
 // if(obj.a.x[50]<obj.b.x[50]){
-  plot('ab', obj.ab.axFront,obj.ab.ayFront,obj.ab.bxFront,obj.ab.byFront,'s',1);
+  plot('ab', obj.a.xFront,obj.a.yFront,obj.b.xFront,obj.b.yFront,'s',1);
   //text+='ab-----------------------------------------------------------^^^^' + '\n'
-  plot('bd', obj.bd.bxFront,obj.bd.byFront,obj.bd.dxFront,obj.bd.dyFront,'b',1);
+  plot('bd', obj.b.xFront,obj.b.yFront,obj.d.xFront,obj.d.yFront,'b',1);
   //text+='bd------------------------------------------------------------^^^^' + '\n'
-  plot('ac', obj.ac.axFront,obj.ac.ayFront,obj.ac.cxFront,obj.ac.cyFront,'b',1);
+  plot('ac', obj.a.xFront,obj.a.yFront,obj.c.xFront,obj.c.yFront,'b',1);
   //text+='ac-----------------------------------------------------------^^^^' + '\n'
-  plot('cd', obj.cd.cxFront,obj.cd.cyFront,obj.cd.dxFront,obj.cd.dyFront,'s',1);
+  plot('cd', obj.c.xFront,obj.c.yFront,obj.d.xFront,obj.d.yFront,'s',1);
   //text+='cd------------------------------------------------------------^^^^' + '\n'
+
 
 // // if(obj.a.x[50]<obj.b.x[50]){
-  plot('ab', obj.ab.axBack,obj.ab.ayBack,obj.ab.bxBack,obj.ab.byBack,'s',1);
+  plot('ab', obj.a.xBack,obj.a.yBack,obj.b.xBack,obj.b.yBack,'s',1);
   //text+='ab-----------------------------------------------------------^^^^' + '\n'
-  plot('bd', obj.bd.bxBack,obj.bd.byBack,obj.bd.dxBack,obj.bd.dyBack,'b',1);
+  plot('bd', obj.b.xBack,obj.b.yBack,obj.d.xBack,obj.d.yBack,'b',1);
   // //text+='bd------------------------------------------------------------^^^^' + '\n'
-  plot('ac', obj.ac.axBack,obj.ac.ayBack,obj.ac.cxBack,obj.ac.cyBack,'b',1);
+  plot('ac', obj.a.xBack,obj.a.yBack,obj.c.xBack,obj.c.yBack,'b',1);
   // //text+='ac-----------------------------------------------------------^^^^' + '\n'
-  plot('cd', obj.cd.cxBack,obj.cd.cyBack,obj.cd.dxBack,obj.cd.dyBack,'s',1);
+  plot('cd', obj.c.xBack,obj.c.yBack,obj.d.xBack,obj.d.yBack,'s',1);
   //text+='cd------------------------------------------------------------^^^^' + '\n'
-
-
-  // plot('ac', obj.ac.axFront,obj.ac.ayFront,obj.ac.cxFront,obj.ac.cyFront,'b',1);
-  // plot('cd', obj.ac.cxBack,obj.ac.cyBack,obj.bd.dxBack,obj.bd.dyBack,'s',1);
-//   //console.log('ab')
-//   else{
-//   plot('ac', obj.ac.axBack,obj.ac.ayBack,obj.ac.cxBack,obj.ac.cyBack,'b',1);
-//   plot('bd', obj.bd.bxBack,obj.bd.byBack,obj.bd.dxBack,obj.bd.dyBack,'b',1);
-//   plot('ac', obj.ac.axFront,obj.ac.ayFront,obj.ac.cxFront,obj.ac.cyFront,'b',1);
-//   plot('cd', obj.c.x,obj.c.y,obj.d.x,obj.d.y,'s',1);
-//   //console.log('cd')
-// }
 
 
 var end = buffer + text
 return end
 }
 
-var extra = 'blinewidth 3 all' + '\n' + 'drawframe no' + '\n' + 'asetticks x no' + '\n' + 'asetticks y no' + '\n' + 'asetminticks x no' + '\n' + 'asetminticks y no' + '\n' +'framewidth 0' + '\n' + 'bstyle yes no no no no no no yes no no 0' + '\n' + 'margins 0 0 0 0' + '\n' + 'range x -1.2 1.2' + '\n' + 'range y -1.2 1.2';
+var extra = 'blinewidth 2 all' + '\n' + 'drawframe no' + '\n' + 'asetticks x no' + '\n' + 'asetticks y no' + '\n' + 'asetminticks x no' + '\n' + 'asetminticks y no' + '\n' +'framewidth 0' + '\n' + 'bstyle yes no no no no no no yes no no 0' + '\n' + 'margins 0 0 0 0' + '\n' + 'range x -1.2 1.2' + '\n' + 'range y -1.2 1.2';
 
-  var d = 400;
+  var d = 500;
   var n = 3;
   var a = (1.2);
   var f1 = 1;
   var f2 = 1;
   var bAndDSize = .95;
   var baseRingStart = radians(0);
-  var base = 60;
+  var base = 90;
   var ringStart1 = radians(base);
   var ringStart2 = radians(base+120);
   var ringStart3 = radians(base+240);
-  var aToCAdd = radians(20);
+  var aToCAdd = radians(5);
 
 var ring1 = makeShape(d,n,a,f1,f2,bAndDSize,baseRingStart,ringStart1,aToCAdd);
 //var ring2 = makeShape(d,n,a,f1,f2,bAndDSize,baseRingStart,ringStart2,aToCAdd);
@@ -542,7 +439,7 @@ var ring1 = makeShape(d,n,a,f1,f2,bAndDSize,baseRingStart,ringStart1,aToCAdd);
 var finish = ring1 + extra;
 //var finish = ring2 + extra;
 //var finish = ring3 + extra;
-//var finish = ring3 + ring2 + ring1 + extra;
+//var finish = ring1 + ring2 + ring3 + extra;
 
 console.log(finish);
 
