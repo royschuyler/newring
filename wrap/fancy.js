@@ -1,3 +1,10 @@
+function fancy (arr,f,n){
+  var box = [];
+  for(i = 0; i < arr.length; i++){
+    box.push( n*(Math.pow(sin(arr[i]),f)) )
+  } return box
+}
+
 function fancyNumbers (arr,f){
   var box = [];
   for(i = 0; i < arr.length; i++){
